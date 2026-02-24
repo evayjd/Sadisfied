@@ -1,34 +1,39 @@
 import uuid
-import time
-
 from langchain_core.messages import HumanMessage
 from graph.builder import build_graph
 
 graph = build_graph()
 
 
-def run_once(user_input: str):
+def run_chat():
+    import uuid
+    from langchain_core.messages import HumanMessage
+
+    session_id = str(uuid.uuid4())
 
     state = {
-        "messages": [HumanMessage(content=user_input)],
+        "messages": [],
         "user_id": "test_user",
-        "session_id": str(uuid.uuid4()),
+        "session_id": session_id,
         "turn_count": 0,
-
         "response": None,
-
         "risk_level": 0,
         "risk_reason": None,
-
         "summary": None,
-
         "emotion": None,
     }
 
-    result = graph.invoke(state)
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() in ["exit", "quit"]:
+            break
 
-    print("RESPONSE:", result.get("response"))
+        state["messages"].append(HumanMessage(content=user_input))
+
+        state = graph.invoke(state)
+
+        print("Assistant:", state.get("response"))
 
 
 if __name__ == "__main__":
-    run_once("hello")
+    run_chat()
