@@ -8,7 +8,7 @@ from sqlalchemy import (
     create_engine
 )
 from sqlalchemy.orm import declarative_base
-from datetime import datetime
+from datetime import datetime, timezone
 
 Base = declarative_base()
 
@@ -21,7 +21,7 @@ class Conversation(Base):
     session_id = Column(String, index=True)
     role = Column(String)  # user / assistant
     content = Column(Text)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda:datetime.now(timezone.utc))
 
 
 class EmotionRecord(Base):
@@ -33,7 +33,7 @@ class EmotionRecord(Base):
     label = Column(String)
     confidence = Column(Float)
     reason = Column(Text)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda:datetime.now(timezone.utc))
 
 
 class RiskRecord(Base):
@@ -44,7 +44,7 @@ class RiskRecord(Base):
     session_id = Column(String, index=True)
     risk_level = Column(Integer)
     risk_reason = Column(Text)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime(timezone=True), default=lambda:datetime.now(timezone.utc))
     
     
     
