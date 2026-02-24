@@ -1,20 +1,47 @@
 from graph.state import GraphState
+from langchain_core.messages import HumanMessage, AIMessage
 
-
-SUMMARY_TRIGGER = 10  # 之后可以放进 config
-
+# 每多少轮触发一次 summary 生成
+SUMMARY_TRIGGER = 10  # 后续可以放入 config
+KEEP_LAST_MESSAGES = 6   # summary 后保留最近多少条消息
 
 def memory_node(state: GraphState):
 
-    turn_count = state.get("turn_count", 0)
+    updates = {}
+
+    #维护turncount
+    turn_count = state.get("turn_count", 0) + 1
+    updates["turn_count"] = turn_count
     
-    #todo：未来在这里做长对话压缩+构建context_messages，token预算控制？
+    messages=state.get("messages",[])
+    summary=state.get("summary")
 
-    # 占位：如果达到阈值就生成 summary
-    if turn_count > 0 and turn_count % SUMMARY_TRIGGER == 0:
-        # 未来这里会调用 LLM 生成 summary
-        return {
-            "summary": "PLACEHOLDER_SUMMARY"
-        }
+    # 决定是否生成 / 更新 summary 
+    if turn_count % SUMMARY_TRIGGER == 0:
+        return updates
+        # TODO（下一阶段）：
+        # 1. 基于历史 messages 调用 LLM
+        # 2. 生成新的 summary
+        # 3. summary 应该是“覆盖式”的，而不是 append
+        updates["summary"] = "PLACEHOLDER_SUMMARY"
+        
+    #构造用于summary的输入（覆盖式）
+    dialogue_text=[]
+    for m in messages:
+        if isinstance(m,HumanMessage):
+            dialogue_text.append(f"user:{m.content}")
+        elif isinstance(m,AIMessage):
+            dialogue_text.append(f"assistant:{m.content}")
+            
+    dialogue_text="\n".join(dialogue_text)
+    
+    #调用llm生成summary，假设已经有summarize_dialogue
+    new_summary=summerize_dialogue(
+        dialogue=dialogue_text,
+        previous_summary=summary
+    )
+    #裁剪历史，summary之后只保留最近N条
+    if len(messages)>KEEP_LAST_MESSAGES:
+        updates["messages"]=messages[-KEEP_LAST_MESSAGES]
 
-    return {}
+    return updates
