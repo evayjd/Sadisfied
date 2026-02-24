@@ -19,11 +19,6 @@ def memory_node(state: GraphState):
     # 决定是否生成 / 更新 summary 
     if turn_count % SUMMARY_TRIGGER == 0:
         return updates
-        # TODO（下一阶段）：
-        # 1. 基于历史 messages 调用 LLM
-        # 2. 生成新的 summary
-        # 3. summary 应该是“覆盖式”的，而不是 append
-        updates["summary"] = "PLACEHOLDER_SUMMARY"
         
     #构造用于summary的输入（覆盖式）
     dialogue_text=[]
