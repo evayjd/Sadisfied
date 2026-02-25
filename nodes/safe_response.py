@@ -10,9 +10,10 @@ CRISIS_TEMPLATE = (
     )
 
 def safe_response_node(state: GraphState):
-    # 先占位，后续可以根据风险等级细化回复内容
+
     text = CRISIS_TEMPLATE
+
     return {
         "response": text,
-        "messages": [AIMessage(content=text)]
+        "messages": state["messages"] + [AIMessage(content=text)]
     }

@@ -7,6 +7,8 @@ from langchain_core.messages import HumanMessage, AIMessage, BaseMessage
 
 from db.redis_client import get_redis_client
 
+DEFAULT_TTL = 3600  # 1 hour
+
 def _state_key(session_id: str) -> str:
     return f"session:{session_id}:state"
 
@@ -78,16 +80,11 @@ def save_state(
 ) -> None:
 
     client = get_redis_client()
-
     data = _serialize_state(state)
     raw = json.dumps(data, ensure_ascii=False)
-
     key = _state_key(session_id)
-#自动会话过期机制
-    if ttl is not None:
-        client.setex(key, ttl, raw)
-    else:
-        client.set(key, raw)
+    ttl = ttl or DEFAULT_TTL
+    client.setex(key, ttl, raw)
 
 #用户可以手动清除对话
 def delete_state(session_id: str) -> None:

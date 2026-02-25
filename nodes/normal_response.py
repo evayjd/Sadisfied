@@ -10,5 +10,5 @@ def normal_response_node(state: GraphState):
 
     return {
         "response": text,
-        "messages": [AIMessage(content=text)]
+        "messages": state["messages"] + [AIMessage(content=text)]
     }

@@ -1,8 +1,10 @@
 from graph.state import GraphState
 from langchain_core.messages import HumanMessage, AIMessage
+from services.summarize import summarize_dialogue
+
 
 # 每多少轮触发一次 summary 生成
-SUMMARY_TRIGGER = 10  # 后续可以放入 config
+SUMMARY_TRIGGER = 12  
 KEEP_LAST_MESSAGES = 6   # summary 后保留最近多少条消息
 
 def memory_node(state: GraphState):
@@ -17,7 +19,7 @@ def memory_node(state: GraphState):
     summary=state.get("summary")
 
     # 决定是否生成 / 更新 summary 
-    if turn_count % SUMMARY_TRIGGER == 0:
+    if turn_count % SUMMARY_TRIGGER != 0:
         return updates
         
     #构造用于summary的输入（覆盖式）
@@ -31,12 +33,13 @@ def memory_node(state: GraphState):
     dialogue_text="\n".join(dialogue_text)
     
     #调用llm生成summary，假设已经有summarize_dialogue
-    new_summary=summerize_dialogue(
+    new_summary=summarize_dialogue(
         dialogue=dialogue_text,
         previous_summary=summary
     )
+    updates["summary"] = new_summary
     #裁剪历史，summary之后只保留最近N条
     if len(messages)>KEEP_LAST_MESSAGES:
-        updates["messages"]=messages[-KEEP_LAST_MESSAGES]
+        updates["messages"]=messages[-KEEP_LAST_MESSAGES:]
 
     return updates
