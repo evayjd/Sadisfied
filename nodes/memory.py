@@ -19,27 +19,31 @@ def memory_node(state: GraphState):
     summary=state.get("summary")
 
     # 决定是否生成 / 更新 summary 
-    if turn_count % SUMMARY_TRIGGER != 0:
-        return updates
-        
-    #构造用于summary的输入（覆盖式）
-    dialogue_text=[]
-    for m in messages:
-        if isinstance(m,HumanMessage):
-            dialogue_text.append(f"user:{m.content}")
-        elif isinstance(m,AIMessage):
-            dialogue_text.append(f"assistant:{m.content}")
+    if turn_count % SUMMARY_TRIGGER == 0:
             
-    dialogue_text="\n".join(dialogue_text)
-    
-    #调用llm生成summary，假设已经有summarize_dialogue
-    new_summary=summarize_dialogue(
-        dialogue=dialogue_text,
-        previous_summary=summary
-    )
-    updates["summary"] = new_summary
-    #裁剪历史，summary之后只保留最近N条
-    if len(messages)>KEEP_LAST_MESSAGES:
-        updates["messages"]=messages[-KEEP_LAST_MESSAGES:]
-
+        #构造用于summary的输入（覆盖式）
+        dialogue_text=[]
+        for m in messages:
+            if isinstance(m,HumanMessage):
+                dialogue_text.append(f"user:{m.content}")
+            elif isinstance(m,AIMessage):
+                dialogue_text.append(f"assistant:{m.content}")
+                
+        dialogue_text="\n".join(dialogue_text)
+        
+        #调用llm生成summary，假设已经有summarize_dialogue
+        new_summary=summarize_dialogue(
+            dialogue=dialogue_text,
+            previous_summary=summary
+        )
+        updates["summary"] = new_summary
+        #裁剪历史，summary之后只保留最近N条
+        if len(messages)>KEEP_LAST_MESSAGES:
+            updates["messages"]=messages[-KEEP_LAST_MESSAGES:]
+        
+    response = state.get("response")
+    if response:
+        messages=messages+ [AIMessage(content=response)]
+    updates["messages"]=messages
+        
     return updates

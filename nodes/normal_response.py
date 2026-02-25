@@ -4,11 +4,11 @@ from services.llm import LLMService
 
 def normal_response_node(state: GraphState):
 
-    messages = state["messages"]
+    messages =state.get("inference_messages", state["messages"])
 
     text = LLMService.generate(messages)
 
     return {
         "response": text,
-        "messages": state["messages"] + [AIMessage(content=text)]
+
     }
