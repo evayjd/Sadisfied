@@ -16,7 +16,7 @@ def risk_node(state: GraphState) -> Dict[str, Any]:
 
     try:
         level, reason = SafetyRules.assess(emotion)
-
+        
     except Exception as e:
         # 降级处理：不要让 graph 崩溃
         return {

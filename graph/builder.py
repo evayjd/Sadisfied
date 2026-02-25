@@ -13,7 +13,6 @@ from nodes.persist import persist_node
 def route_by_risk(state: GraphState) -> str:
     """
     0/1 -> normal_response
-    或者1可以再细分?
     2 -> safe_response
     """
     level = state.get("risk_level", 0)
