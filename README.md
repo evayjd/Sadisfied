@@ -153,24 +153,8 @@ Testing focuses on:
 
 ---
 
-## 5. Project Structure
-Sadisfied/
-│
-├── graph/
-├── nodes/
-├── services/
-├── db/
-├── test/
-├── app.py
-├── config.py
-└── setup.py
 
-
-The system is modular and designed for future extensibility.
-
----
-
-## 6. Future Improvements
+## 5. Future Improvements
 
 Planned enhancements include:
 
@@ -182,7 +166,7 @@ Planned enhancements include:
 
 ---
 
-## 7. Running the Project
+## 6. Running the Project
 
 Install dependencies:
 
