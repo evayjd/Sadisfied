@@ -8,6 +8,5 @@ def emotion_node(state: GraphState) -> dict:
                 "reason": "/",
                 "secondary": None,
                 "distribution": None,
-                "meta": {"model": "emotion_stub", "version": "v1"}
         }
     }
