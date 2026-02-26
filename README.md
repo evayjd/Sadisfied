@@ -1,6 +1,3 @@
-# Sadisfied
-一个基于 LangGraph 的多节点情绪支持 Agent
-一个关于“记忆”和“陪伴”的实验性系统
 
 # About This Project (For Recruiters)
 # Sadisfied
