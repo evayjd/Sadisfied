@@ -31,7 +31,7 @@ def memory_node(state: GraphState):
                 
         dialogue_text="\n".join(dialogue_text)
         
-        #调用llm生成summary，假设已经有summarize_dialogue
+        #调用llm生成summary
         new_summary=summarize_dialogue(
             dialogue=dialogue_text,
             previous_summary=summary
